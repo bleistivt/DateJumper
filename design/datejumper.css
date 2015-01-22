@@ -1,0 +1,17 @@
+.DiscussionDateSpacer {
+    display: inline-block;
+    background: blue;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    margin: 10px;
+}
+
+.CommentDateSpacer {
+    display: inline-block;
+    background: green;
+    color: white;
+    padding: 5px;
+    text-align: center;
+    margin: 10px;
+}
