@@ -6,7 +6,8 @@ $PluginInfo['DateJumper'] = array(
     'Description' => 'Place a Date Label above discussions and comments for easier viewing of posts by date. Click on date label option to go to next date.',
     'SettingsUrl' => '/dashboard/settings/datejumper',
     'MobileFriendly' => TRUE,
-    'Author' => 'peregrine'
+    'Author' => 'peregrine',
+    'License' => 'GNU GPL2'
 );
 
 class DateJumperPlugin extends Gdn_Plugin {
