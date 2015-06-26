@@ -1,7 +1,7 @@
 <?php
 
 $PluginInfo['DateJumper'] = array(
-    'Version' => '1.6',
+    'Version' => '1.7',
     'Name' => 'Date Jumper',
     'Description' => 'Place a Date Label above discussions and comments for easier viewing of posts by date. Click on date label option to go to next date.',
     'SettingsUrl' => 'settings/datejumper',
@@ -70,12 +70,15 @@ class DateJumperPlugin extends Gdn_Plugin {
         if (!C('Plugins.DateJumper.ShowInDiscussions', false)) {
             return;
         }
+        if ($args['Discussion']->Announce == 1 || ($args['Discussion']->Announce == 2 && $sender->ClassName === 'CategoriesController') ) {
+        	return;
+	    }
         $date = Gdn_Format::Date($args['Discussion']->LastDate);
         if ($date != $this->KeepDate) {
             if (!strpos($date, ':')) {
                 echo wrap(wrap($date, 'span', array('class' => 'DiscussionDateSpacer')), 'li');
             } elseif (!strpos($this->KeepDate, ':')) {
-                echo wrap(wrap(t('Discussion Today'), 'span', array('class' => 'DiscussionDateSpacer')), 'li');
+                echo wrap(wrap(t('Today'), 'span', array('class' => 'DiscussionDateSpacer')), 'li');
             }
             $this->KeepDate = $date;
         }
@@ -91,7 +94,7 @@ class DateJumperPlugin extends Gdn_Plugin {
             if (!strpos($date, ':')) {
                 echo wrap(wrap($date, 'div', array('class' => 'CommentDateSpacer')), 'li');
             } elseif (!$this->today) {
-                echo wrap(wrap(t('Comment Today'), 'div', array('class' => 'CommentDateSpacer')), 'li');
+                echo wrap(wrap(t('Today'), 'div', array('class' => 'CommentDateSpacer')), 'li');
                 $this->today = true;
             }
         }
