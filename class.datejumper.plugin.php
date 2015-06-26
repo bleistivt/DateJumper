@@ -1,130 +1,100 @@
-<?php if(!defined('APPLICATION')) die();
+<?php
 
 $PluginInfo['DateJumper'] = array(
     'Version' => '1.6',
     'Name' => 'Date Jumper',
     'Description' => 'Place a Date Label above discussions and comments for easier viewing of posts by date. Click on date label option to go to next date.',
-    'SettingsUrl' => '/dashboard/settings/datejumper',
-    'MobileFriendly' => TRUE,
+    'SettingsUrl' => 'settings/datejumper',
+    'MobileFriendly' => true,
     'Author' => 'peregrine',
     'License' => 'GNU GPL2'
 );
 
 class DateJumperPlugin extends Gdn_Plugin {
 
-    public function Base_Render_Before($Sender) {
+    private $KeepDate;
 
-        $Controller = $Sender->ControllerName;
+    public function Base_Render_Before($sender) {
         $ShowOnController = array(
             'discussioncontroller',
             'discussionscontroller',
             'categoriescontroller'
         );
-        if (!InArrayI($Controller, $ShowOnController))
-            return;
-        $Sender->AddJsFile($this->GetResource('js/datejumper.js', FALSE, FALSE));
+        if (in_array(strtolower($sender->ControllerName), $ShowOnController))
+            $sender->AddJsFile('datejumper.js', 'plugins/DateJumper');
+        }
     }
 
-    public function SettingsController_DateJumper_Create($Sender) {
-        $Session = Gdn::Session();
-        $Sender->Title('Date Jumper');
-        $Sender->AddSideMenu('plugin/datejumper');
-        $Sender->Permission('Garden.Settings.Manage');
-        $Sender->Form = new Gdn_Form();
+    public function AssetModel_StyleCss_Handler($sender) {
+        $sender->AddCssFile('datejumper.css', 'plugins/DateJumper');
+    }
+
+    public function SettingsController_DateJumper_Create($sender) {
+        $sender->Title('Date Jumper');
+        $sender->AddSideMenu('plugin/datejumper');
+        $sender->Permission('Garden.Settings.Manage');
+        $sender->Form = new Gdn_Form();
         $Validation = new Gdn_Validation();
         $ConfigurationModel = new Gdn_ConfigurationModel($Validation);
         $ConfigurationModel->SetField(array(
             'Plugins.DateJumper.ShowInDiscussions',
             'Plugins.DateJumper.ShowInComments'
         ));
-        $Sender->Form->SetModel($ConfigurationModel);
+        $sender->Form->SetModel($ConfigurationModel);
 
-
-        if ($Sender->Form->AuthenticatedPostBack() === FALSE) {
-            $Sender->Form->SetData($ConfigurationModel->Data);
-        } else {
-            $Data = $Sender->Form->FormValues();
-
-            if ($Sender->Form->Save() !== FALSE)
-                $Sender->StatusMessage = T("Your settings have been saved.");
+        if (!$sender->Form->AuthenticatedPostBack()) {
+            $sender->Form->SetData($ConfigurationModel->Data);
+        } elseif ($sender->Form->Save()) {
+            $sender->informMessage = t('Your settings have been saved.');
         }
-        $Sender->Render($this->GetView('datejumper-settings.php'));
+        $sender->Render('datejumper-settings', '', 'plugins/DateJumper');
     }
 
-    public function DiscussionsController_BeforeDiscussionName_Handler($Sender) {
-        if (C('Plugins.DateJumper.ShowInDiscussions', FALSE)) {
-            $this->DisplayDiscussionDateHeading($Sender);
-        }
+    public function DiscussionsController_BeforeDiscussionName_Handler($sender) {
+        $this->DisplayDiscussionDateHeading($sender);
     }
 
-    public function CategoriesController_BeforeDiscussionName_Handler($Sender) {
-        if (C('Plugins.DateJumper.ShowInDiscussions', FALSE)) {
-            $this->DisplayDiscussionDateHeading($Sender);
-        }
+    public function CategoriesController_BeforeDiscussionName_Handler($sender) {
+        $this->DisplayDiscussionDateHeading($sender);
     }
 
-    public function DiscussionsController_BetweenDiscussion_Handler($Sender) {
-        if (C('Plugins.DateJumper.ShowInDiscussions', FALSE)) {
-            $this->DisplayDiscussionDateHeading($Sender);
-        }
+    public function DiscussionsController_BetweenDiscussion_Handler($sender) {
+        $this->DisplayDiscussionDateHeading($sender);
     }
 
-    public function CategoriesController_BetweenDiscussion_Handler($Sender) {
-        if (C('Plugins.DateJumper.ShowInDiscussions', FALSE)) {
-            $this->DisplayDiscussionDateHeading($Sender);
-        }
+    public function CategoriesController_BetweenDiscussion_Handler($sender) {
+        $this->DisplayDiscussionDateHeading($sender);
     }
 
-    public function DiscussionController_BeforeCommentDisplay_Handler($Sender) {
-        if (C('Plugins.DateJumper.ShowInComments', FALSE)) {
-            $this->DisplayDateCommentHeading($Sender);
+    private function DisplayDiscussionDateHeading($sender, $args) {
+        if (!C('Plugins.DateJumper.ShowInDiscussions', false)) {
+            return;
         }
-    }
-
-    private function DisplayDiscussionDateHeading($Sender) {
-        $Discussion = $Sender->EventArguments["Discussion"];
-
-        static $KeepDate;
-        $CurDate = Gdn_Format::Date($Discussion->LastDate);
-        if ($CurDate <> $KeepDate) {
-
-
-
-            if (!strpos($CurDate, ":")) {
-                echo wrap(wrap($CurDate, 'span', array('class' => "DiscussionDateSpacer")), 'li');
-            } else {
-              if (!strpos($KeepDate, ":")) {
-              echo wrap(wrap(T("Discussion Today"), 'span', array('class' => "DiscussionDateSpacer")), 'li');
-              }
+        $date = Gdn_Format::Date($args['Discussion']->LastDate);
+        if ($date != $this->KeepDate) {
+            if (!strpos($date, ':')) {
+                echo wrap(wrap($date, 'span', array('class' => 'DiscussionDateSpacer')), 'li');
+            } elseif (!strpos($this->KeepDate, ':')) {
+                echo wrap(wrap(t('Discussion Today'), 'span', array('class' => 'DiscussionDateSpacer')), 'li');
             }
-            $KeepDate = $CurDate;
+            $this->KeepDate = $date;
         }
-   }
+    }
 
-    private function DisplayDateCommentHeading($Sender) {
-        $Comment = $Sender->EventArguments["Comment"];
-
-        static $KeepDate;
-        static $x = 1;
-        $CurDate = Gdn_Format::Date($Comment->DateInserted);
-
-        if ($CurDate <> $KeepDate) {
-            $KeepDate = $CurDate;
-            if (!strpos($CurDate, ":")) {
-                $CommentDateHeader = wrap(wrap($CurDate, 'div', array('class' => "CommentDateSpacer")), 'li');
-                echo $CommentDateHeader;
-            } else {
-                if ($x < 2) {
-                    $CommentDateHeader = wrap(wrap(T("Comment Today"), 'div', array('class' => "CommentDateSpacer")), 'li');
-                    echo $CommentDateHeader;
-                    $x++;
-                }
+    public function DiscussionController_BeforeCommentDisplay_Handler($sender, $args) {
+        if (!C('Plugins.DateJumper.ShowInComments', false)) {
+            return;
+        }
+        $date = Gdn_Format::Date($args['Comment']->DateInserted);
+        if ($date != $this->KeepDate) {
+            $this->KeepDate = $date;
+            if (!strpos($date, ':')) {
+                echo wrap(wrap($date, 'div', array('class' => 'CommentDateSpacer')), 'li');
+            } elseif (!$this->today) {
+                echo wrap(wrap(t('Comment Today'), 'div', array('class' => 'CommentDateSpacer')), 'li');
+                $this->today = true;
             }
         }
-    }
-
-    public function AssetModel_StyleCss_Handler($Sender, $Args) {
-        $Sender->AddCssFile('datejumper.css', 'plugins/DateJumper');
     }
 
 }
