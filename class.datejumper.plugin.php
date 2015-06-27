@@ -58,7 +58,7 @@ class DateJumperPlugin extends Gdn_Plugin {
     }
 
     public function discussionController_beforeCommentDisplay_handler($sender, $args) {
-        if (!C('Plugins.DateJumper.ShowInComments', false)) {
+        if (!C('Plugins.DateJumper.ShowInComments')) {
             return;
         }
         $date = Gdn_Format::date($args['Comment']->DateInserted);
@@ -74,7 +74,7 @@ class DateJumperPlugin extends Gdn_Plugin {
     }
 
     private function discussionDateHeading($sender, $args, $inCategory = false) {
-        if (!C('Plugins.DateJumper.ShowInDiscussions', false)) {
+        if (!C('Plugins.DateJumper.ShowInDiscussions')) {
             return;
         }
         if ($args['Discussion']->Announce == 1 || ($args['Discussion']->Announce == 2 && $inCategory)) {
