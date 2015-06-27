@@ -5,6 +5,7 @@ $PluginInfo['DateJumper'] = array(
     'Name' => 'Date Jumper',
     'Description' => 'Place a Date Label above discussions and comments for easier viewing of posts by date. Click on date label option to go to next date.',
     'SettingsUrl' => 'settings/datejumper',
+    'SettingsPermission' => 'Garden.Settings.Manage',
     'MobileFriendly' => true,
     'Author' => 'peregrine',
     'License' => 'GNU GPL2'
@@ -27,27 +28,6 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     public function AssetModel_StyleCss_Handler($sender) {
         $sender->AddCssFile('datejumper.css', 'plugins/DateJumper');
-    }
-
-    public function SettingsController_DateJumper_Create($sender) {
-        $sender->Title('Date Jumper');
-        $sender->AddSideMenu('plugin/datejumper');
-        $sender->Permission('Garden.Settings.Manage');
-        $sender->Form = new Gdn_Form();
-        $Validation = new Gdn_Validation();
-        $ConfigurationModel = new Gdn_ConfigurationModel($Validation);
-        $ConfigurationModel->SetField(array(
-            'Plugins.DateJumper.ShowInDiscussions',
-            'Plugins.DateJumper.ShowInComments'
-        ));
-        $sender->Form->SetModel($ConfigurationModel);
-
-        if (!$sender->Form->AuthenticatedPostBack()) {
-            $sender->Form->SetData($ConfigurationModel->Data);
-        } elseif ($sender->Form->Save()) {
-            $sender->informMessage = t('Your settings have been saved.');
-        }
-        $sender->Render('datejumper-settings', '', 'plugins/DateJumper');
     }
 
     public function DiscussionsController_BeforeDiscussionName_Handler($sender) {
@@ -98,6 +78,27 @@ class DateJumperPlugin extends Gdn_Plugin {
                 $this->today = true;
             }
         }
+    }
+    
+    public function settingsController_dateJumper_create($sender) {
+        $sender->permission('Garden.Settings.Manage');
+        $sender->addSideMenu('plugin/datejumper');
+
+        $conf = new ConfigurationModule($sender);
+        $conf->initialize([
+            'Plugins.DateJumper.ShowInDiscussions' => [
+                'Control' => 'CheckBox',
+                'LabelCode' => 'Show Date Jumper Labels on Discussion Topic Pages'
+            ],
+            'Plugins.DateJumper.ShowInComments' => [
+                'Control' => 'CheckBox',
+                'LabelCode' => 'Show Date Jumper Labels within Comments in a Discussion'
+            ]
+        ]);
+
+        $sender->title('Date Jumper');
+        $sender->setData('Description', 'See readme for instructions for further details.');
+        $conf->renderAll();
     }
 
 }
