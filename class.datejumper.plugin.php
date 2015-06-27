@@ -25,7 +25,7 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     /* DiscussionsController */
 
-    public function discussionsController_Render_before($sender) {
+    public function discussionsController_render_before($sender) {
         $this->addResources($sender);
     }
 
@@ -39,7 +39,7 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     /* CategoriesController */
 
-    public function categoriesController_Render_before($sender) {
+    public function categoriesController_render_before($sender) {
         $this->addResources($sender);
     }
 
@@ -53,7 +53,7 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     /* DiscussionController */
 
-    public function discussionController_Render_before($sender) {
+    public function discussionController_render_before($sender) {
         $this->addResources($sender);
     }
 
