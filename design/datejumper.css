@@ -1,29 +1,15 @@
-.DiscussionDateSpacer {
+.DiscussionDateSpacer, .CommentDateSpacer  {
     display: inline-block;
-	background: #CCEEFF;
-	color: #FFFFFF;
-	border-radius: 2px 2px 0 0;
-	padding: 4px 8px 0px 8px !important;
-	width: 16%;
-	margin-top: 10px;
-	text-align: center;
-	padding: 0;
-	border-bottom: 1px solid #DDD;
-	color: #333;
-	font-size: 0.9em;
-}
-
-.CommentDateSpacer {
-    display: inline-block;
-	background: #CCEEFF;
-	color: #FFFFFF;
-	border-radius: 2px 2px 0 0;
-	padding: 4px 8px 0px 8px !important;
-	width: 16%;
-	margin-top: 10px;
-	text-align: center;
-	padding: 0;
-	border-bottom: 1px solid #DDD;
-	color: #333;
-	font-size: 0.9em;
+    background: #cef;
+    color: #fff;
+    border-radius: 2px 2px 0 0;
+    padding: 4px 8px 0 8px !important;
+    width: 16%;
+    margin-top: 10px;
+    text-align: center;
+    padding: 0;
+    border-bottom: 1px solid #ddd;
+    color: #333;
+    font-size: .9em;
+    cursor: pointer;
 }
