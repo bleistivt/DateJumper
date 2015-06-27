@@ -13,64 +13,57 @@ $PluginInfo['DateJumper'] = array(
 
 class DateJumperPlugin extends Gdn_Plugin {
 
-    private $KeepDate;
+    private $keepDate;
 
-    public function Base_Render_Before($sender) {
-        $ShowOnController = array(
-            'discussioncontroller',
-            'discussionscontroller',
-            'categoriescontroller'
-        );
-        if (in_array(strtolower($sender->ControllerName), $ShowOnController))
-            $sender->AddJsFile('datejumper.js', 'plugins/DateJumper');
-        }
+    public function assetModel_styleCss_handler($sender) {
+        $sender->addCssFile('datejumper.css', 'plugins/DateJumper');
     }
 
-    public function AssetModel_StyleCss_Handler($sender) {
-        $sender->AddCssFile('datejumper.css', 'plugins/DateJumper');
+    private function addResources($sender) {
+        $sender->addJsFile('datejumper.js', 'plugins/DateJumper');
     }
 
-    public function DiscussionsController_BeforeDiscussionName_Handler($sender) {
-        $this->DisplayDiscussionDateHeading($sender);
+    /* DiscussionsController */
+
+    public function discussionsController_Render_before($sender) {
+        $this->addResources($sender);
     }
 
-    public function CategoriesController_BeforeDiscussionName_Handler($sender) {
-        $this->DisplayDiscussionDateHeading($sender);
+    public function discussionsController_beforeDiscussionName_handler($sender, $args) {
+        $this->discussionDateHeading($sender, $args);
     }
 
-    public function DiscussionsController_BetweenDiscussion_Handler($sender) {
-        $this->DisplayDiscussionDateHeading($sender);
+    public function discussionsController_betweenDiscussion_handler($sender, $args) {
+        $this->discussionDateHeading($sender, $args);
     }
 
-    public function CategoriesController_BetweenDiscussion_Handler($sender) {
-        $this->DisplayDiscussionDateHeading($sender);
+    /* CategoriesController */
+
+    public function categoriesController_Render_before($sender) {
+        $this->addResources($sender);
     }
 
-    private function DisplayDiscussionDateHeading($sender, $args) {
-        if (!C('Plugins.DateJumper.ShowInDiscussions', false)) {
-            return;
-        }
-        if ($args['Discussion']->Announce == 1 || ($args['Discussion']->Announce == 2 && $sender->ClassName === 'CategoriesController') ) {
-        	return;
-	    }
-        $date = Gdn_Format::Date($args['Discussion']->LastDate);
-        if ($date != $this->KeepDate) {
-            if (!strpos($date, ':')) {
-                echo wrap(wrap($date, 'span', array('class' => 'DiscussionDateSpacer')), 'li');
-            } elseif (!strpos($this->KeepDate, ':')) {
-                echo wrap(wrap(t('Today'), 'span', array('class' => 'DiscussionDateSpacer')), 'li');
-            }
-            $this->KeepDate = $date;
-        }
+    public function categoriesController_beforeDiscussionName_handler($sender, $args) {
+        $this->discussionDateHeading($sender, $args, true);
     }
 
-    public function DiscussionController_BeforeCommentDisplay_Handler($sender, $args) {
+    public function categoriesController_betweenDiscussion_handler($sender, $args) {
+        $this->discussionDateHeading($sender, $args, true);
+    }
+
+    /* DiscussionController */
+
+    public function discussionController_Render_before($sender) {
+        $this->addResources($sender);
+    }
+
+    public function discussionController_beforeCommentDisplay_handler($sender, $args) {
         if (!C('Plugins.DateJumper.ShowInComments', false)) {
             return;
         }
-        $date = Gdn_Format::Date($args['Comment']->DateInserted);
-        if ($date != $this->KeepDate) {
-            $this->KeepDate = $date;
+        $date = Gdn_Format::date($args['Comment']->DateInserted);
+        if ($date != $this->keepDate) {
+            $this->keepDate = $date;
             if (!strpos($date, ':')) {
                 echo wrap(wrap($date, 'div', array('class' => 'CommentDateSpacer')), 'li');
             } elseif (!$this->today) {
@@ -79,7 +72,25 @@ class DateJumperPlugin extends Gdn_Plugin {
             }
         }
     }
-    
+
+    private function discussionDateHeading($sender, $args, $inCategory = false) {
+        if (!C('Plugins.DateJumper.ShowInDiscussions', false)) {
+            return;
+        }
+        if ($args['Discussion']->Announce == 1 || ($args['Discussion']->Announce == 2 && $inCategory)) {
+            return;
+        }
+        $date = Gdn_Format::date($args['Discussion']->LastDate);
+        if ($date != $this->keepDate) {
+            if (!strpos($date, ':')) {
+                echo wrap(wrap($date, 'span', array('class' => 'DiscussionDateSpacer')), 'li');
+            } elseif (!strpos($this->keepDate, ':')) {
+                echo wrap(wrap(t('Today'), 'span', array('class' => 'DiscussionDateSpacer')), 'li');
+            }
+            $this->keepDate = $date;
+        }
+    }
+
     public function settingsController_dateJumper_create($sender) {
         $sender->permission('Garden.Settings.Manage');
         $sender->addSideMenu('plugin/datejumper');
