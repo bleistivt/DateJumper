@@ -1,27 +1,18 @@
-jQuery(document).ready(function ($) {
+jQuery.fn.dateSpacerClick = function (selector, duration) {
+    'use strict';
 
-    $('.DiscussionDateSpacer').on('click', function (event) {
-        var index = $(".DiscussionDateSpacer").index(this);
-        index++;
-        var target = $(".DiscussionDateSpacer").get(index);
-        if (typeof target == 'undefined') {
-            target = ".DiscussionDateSpacer";
-        }
-        $('html, body').animate({
+    return this.on('click', function () {
+        var index = jQuery(selector).index(this) + 1,
+            target = jQuery(selector).get(index) || selector;
+        jQuery('html, body').animate({
             scrollTop: $(target).offset().top
-        }, 1000);
+        }, duration);
     });
+};
 
-    $('.CommentDateSpacer').on('click', function (event) {
-        var index = $(".CommentDateSpacer").index(this);
-        index++;
-        var target = $(".CommentDateSpacer").get(index);
-        if (typeof target == 'undefined') {
-            target = ".CommentDateSpacer";
-        }
-        $('html, body').animate({
-            scrollTop: $(target).offset().top
-        }, 2000);
-    });
+jQuery(function ($) {
+    'use strict';
 
+    $('.DiscussionDateSpacer').dateSpacerClick('.DiscussionDateSpacer', 1000);
+    $('.CommentDateSpacer').dateSpacerClick('.CommentDateSpacer', 2000);
 });
