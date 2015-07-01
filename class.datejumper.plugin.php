@@ -3,7 +3,7 @@
 $PluginInfo['DateJumper'] = array(
     'Version' => '1.7',
     'Name' => 'Date Jumper',
-    'Description' => 'Place a Date Label above discussions and comments for easier viewing of posts by date. Click on date label option to go to next date.',
+    'Description' => 'Places a date label above discussions and comments to separate them by age.',
     'SettingsUrl' => 'settings/datejumper',
     'SettingsPermission' => 'Garden.Settings.Manage',
     'MobileFriendly' => true,
@@ -93,19 +93,19 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     public function settingsController_dateJumper_create($sender) {
         $sender->permission('Garden.Settings.Manage');
-        $sender->addSideMenu('plugin/datejumper');
+        $sender->addSideMenu();
 
         $conf = new ConfigurationModule($sender);
-        $conf->initialize([
-            'Plugins.DateJumper.ShowInDiscussions' => [
+        $conf->initialize(array(
+            'Plugins.DateJumper.ShowInDiscussions' => array(
                 'Control' => 'CheckBox',
                 'LabelCode' => 'Show Date Jumper Labels on Discussion Topic Pages'
-            ],
-            'Plugins.DateJumper.ShowInComments' => [
+            ),
+            'Plugins.DateJumper.ShowInComments' => array(
                 'Control' => 'CheckBox',
                 'LabelCode' => 'Show Date Jumper Labels within Comments in a Discussion'
-            ]
-        ]);
+            )
+        ));
 
         $sender->title('Date Jumper');
         $sender->setData('Description', 'See readme for instructions for further details.');
