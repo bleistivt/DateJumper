@@ -40,6 +40,7 @@ class DateJumperPlugin extends Gdn_Plugin {
         $this->discussionDateHeading($sender, $args);
     }
 
+
     /* CategoriesController */
 
     public function categoriesController_render_before($sender) {
