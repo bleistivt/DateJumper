@@ -1,0 +1,20 @@
+{
+    "version": "1.8",
+    "name": "Date Jumper",
+    "description": "Places a date label above discussions and comments to separate them by age.",
+    "settingsUrl": "settings/datejumper",
+    "settingsPermission": "Garden.Settings.Manage",
+    "mobileFriendly": true,
+    "license": "GNU GPL2",
+    "gitHub": "bleistivt/DateJumper",
+    "key": "datejumper",
+    "type": "addon",
+    "authors": [
+        {
+            "name": "Peregrine"
+        },
+        {
+            "name": "Bleistivt"
+        }
+    ]
+}
