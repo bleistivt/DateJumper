@@ -1,16 +1,5 @@
 <?php
 
-$PluginInfo['DateJumper'] = [
-    'Version' => '1.7',
-    'Name' => 'Date Jumper',
-    'Description' => 'Places a date label above discussions and comments to separate them by age.',
-    'SettingsUrl' => 'settings/datejumper',
-    'SettingsPermission' => 'Garden.Settings.Manage',
-    'MobileFriendly' => true,
-    'Author' => 'peregrine',
-    'License' => 'GNU GPL2'
-];
-
 class DateJumperPlugin extends Gdn_Plugin {
 
     private $keepDate;
@@ -100,7 +89,7 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     public function settingsController_dateJumper_create($sender) {
         $sender->permission('Garden.Settings.Manage');
-        $sender->addSideMenu();
+        $sender->setHighlightRoute();
 
         $conf = new ConfigurationModule($sender);
         $conf->initialize([
@@ -115,7 +104,7 @@ class DateJumperPlugin extends Gdn_Plugin {
         ]);
 
         $sender->title('Date Jumper');
-        $sender->setData('Description', 'See readme for instructions for further details.');
+        $sender->setData('Description', 'See README.MD for instructions and further details.');
         $conf->renderAll();
     }
 
