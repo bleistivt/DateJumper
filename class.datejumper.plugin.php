@@ -21,11 +21,7 @@ class DateJumperPlugin extends Gdn_Plugin {
         $this->addResources($sender);
     }
 
-    public function discussionsController_beforeDiscussionName_handler($sender, $args) {
-        $this->discussionDateHeading($sender, $args);
-    }
-
-    public function discussionsController_betweenDiscussion_handler($sender, $args) {
+    public function discussionsController_beforeDiscussionContent_handler($sender, $args) {
         $this->discussionDateHeading($sender, $args);
     }
 
@@ -36,11 +32,7 @@ class DateJumperPlugin extends Gdn_Plugin {
         $this->addResources($sender);
     }
 
-    public function categoriesController_beforeDiscussionName_handler($sender, $args) {
-        $this->discussionDateHeading($sender, $args, true);
-    }
-
-    public function categoriesController_betweenDiscussion_handler($sender, $args) {
+    public function categoriesController_beforeDiscussionContent_handler($sender, $args) {
         $this->discussionDateHeading($sender, $args, true);
     }
 
@@ -78,9 +70,9 @@ class DateJumperPlugin extends Gdn_Plugin {
         $date = Gdn_Format::date($args['Discussion']->LastDate);
         if ($date != $this->keepDate) {
             if (!strpos($date, ':')) {
-                echo wrap(wrap($date, 'span', ['class' => 'DiscussionDateSpacer']), 'li');
+                echo wrap(wrap($date, 'span', ['class' => 'DiscussionDateSpacer']), 'div');
             } elseif (!strpos($this->keepDate, ':')) {
-                echo wrap(wrap(t('Today'), 'span', ['class' => 'DiscussionDateSpacer']), 'li');
+                echo wrap(wrap(t('Today'), 'span', ['class' => 'DiscussionDateSpacer']), 'div');
             }
             $this->keepDate = $date;
         }
@@ -89,7 +81,6 @@ class DateJumperPlugin extends Gdn_Plugin {
 
     public function settingsController_dateJumper_create($sender) {
         $sender->permission('Garden.Settings.Manage');
-        $sender->setHighlightRoute();
 
         $conf = new ConfigurationModule($sender);
         $conf->initialize([
