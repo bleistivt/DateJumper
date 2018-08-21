@@ -3,6 +3,7 @@
 class DateJumperPlugin extends Gdn_Plugin {
 
     private $keepDate;
+    private $today;
 
 
     public function assetModel_styleCss_handler($sender) {
