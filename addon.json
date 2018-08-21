@@ -1,5 +1,5 @@
 {
-    "version": "1.8",
+    "version": "1.9",
     "name": "Date Jumper",
     "description": "Places a date label above discussions and comments to separate them by age.",
     "settingsUrl": "settings/datejumper",
