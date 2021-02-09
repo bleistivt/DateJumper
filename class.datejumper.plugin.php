@@ -45,7 +45,7 @@ class DateJumperPlugin extends Gdn_Plugin {
     }
 
     public function discussionController_beforeCommentDisplay_handler($sender, $args) {
-        if (!C('Plugins.DateJumper.ShowInComments')) {
+        if (!Gdn::config('Plugins.DateJumper.ShowInComments')) {
             return;
         }
         $date = Gdn_Format::date($args['Comment']->DateInserted);
@@ -54,7 +54,7 @@ class DateJumperPlugin extends Gdn_Plugin {
             if (!strpos($date, ':')) {
                 echo wrap(wrap($date, 'div', ['class' => 'CommentDateSpacer']), 'li');
             } elseif (!$this->today) {
-                echo wrap(wrap(t('Today'), 'div', ['class' => 'CommentDateSpacer']), 'li');
+                echo wrap(wrap(Gdn::translate('Today'), 'div', ['class' => 'CommentDateSpacer']), 'li');
                 $this->today = true;
             }
         }
@@ -62,7 +62,7 @@ class DateJumperPlugin extends Gdn_Plugin {
 
 
     private function discussionDateHeading($sender, $args, $inCategory = false) {
-        if (!C('Plugins.DateJumper.ShowInDiscussions')) {
+        if (!Gdn::config('Plugins.DateJumper.ShowInDiscussions')) {
             return;
         }
         if ($args['Discussion']->Announce == 1 || ($args['Discussion']->Announce == 2 && $inCategory)) {
@@ -73,7 +73,7 @@ class DateJumperPlugin extends Gdn_Plugin {
             if (!strpos($date, ':')) {
                 echo wrap(wrap($date, 'span', ['class' => 'DiscussionDateSpacer']), 'div');
             } elseif (!strpos($this->keepDate, ':')) {
-                echo wrap(wrap(t('Today'), 'span', ['class' => 'DiscussionDateSpacer']), 'div');
+                echo wrap(wrap(Gdn::translate('Today'), 'span', ['class' => 'DiscussionDateSpacer']), 'div');
             }
             $this->keepDate = $date;
         }
